@@ -1,81 +1,84 @@
 /*==============================================================================
 Copyright (c) 2013-2014 Qualcomm Connected Experiences, Inc.
 All Rights Reserved.
-Confidential and Proprietary - Qualcomm Connected Experiences, Inc.
+Confidential and Proprietary - Protected under copyright and other laws.
 ==============================================================================*/
 
 
 using UnityEngine;
 
-/// <summary>
-/// A default event handler that implements the ISmartTerrainEventHandler interface.
-/// It uses a single Prop template that is used for every newly created prop.
-/// </summary>
-public class DefaultSmartTerrainEventHandler : MonoBehaviour, ISmartTerrainEventHandler
+namespace Vuforia
 {
-    #region PUBLIC_MEMBERS
-
-    public PropBehaviour PropTemplate;
-
-    #endregion // PUBLIC_MEMBERS
-
-
-
-    #region UNTIY_MONOBEHAVIOUR_METHODS
-
-    void Start()
+    /// <summary>
+    /// A default event handler that handles reconstruction events for a ReconstructionFromTarget
+    /// It uses a single Prop template that is used for every newly created prop, 
+    /// and a surface template that is used for the primary surface
+    /// </summary>
+    public class DefaultSmartTerrainEventHandler : MonoBehaviour
     {
-        SmartTerrainBehaviour behaviour = GetComponent<SmartTerrainBehaviour>();
-        if (behaviour)
+        #region PRIVATE_MEMBERS
+
+        private ReconstructionBehaviour mReconstructionBehaviour;
+
+        #endregion // PRIVATE_MEMBERS
+
+
+        #region PUBLIC_MEMBERS
+
+        public PropBehaviour PropTemplate;
+        public SurfaceBehaviour SurfaceTemplate;
+
+        #endregion // PUBLIC_MEMBERS
+
+
+
+        #region UNTIY_MONOBEHAVIOUR_METHODS
+
+        void Start()
         {
-            behaviour.RegisterSmartTerrainEventHandler(this);
+            mReconstructionBehaviour = GetComponent<ReconstructionBehaviour>();
+            if (mReconstructionBehaviour)
+            {
+                mReconstructionBehaviour.RegisterPropCreatedCallback(OnPropCreated);
+                mReconstructionBehaviour.RegisterSurfaceCreatedCallback(OnSurfaceCreated);
+            }
         }
+
+        void OnDestroy()
+        {
+            if (mReconstructionBehaviour)
+            {
+                mReconstructionBehaviour.UnregisterPropCreatedCallback(OnPropCreated);
+                mReconstructionBehaviour.UnregisterSurfaceCreatedCallback(OnSurfaceCreated);
+            }
+        }
+
+        #endregion // UNTIY_MONOBEHAVIOUR_METHODS
+
+
+
+        #region RECONSTRUCTION_CALLBACKS
+
+        /// <summary>
+        /// Called when a prop has been created
+        /// </summary>
+        public void OnPropCreated(Prop prop)
+        {
+            if (mReconstructionBehaviour)
+                mReconstructionBehaviour.AssociateProp(PropTemplate, prop);
+        }
+
+        /// <summary>
+        /// Called when a surface has been created
+        /// </summary>
+        public void OnSurfaceCreated(Surface surface)
+        {
+            if (mReconstructionBehaviour)
+                mReconstructionBehaviour.AssociateSurface(SurfaceTemplate, surface);
+        }
+
+        #endregion // RECONSTRUCTION_CALLBACKS
     }
-
-    #endregion // UNTIY_MONOBEHAVIOUR_METHODS
-
-
-
-    #region ISmartTerrainEventHandler_IMPLEMENTATION
-
-    /// <summary>
-    /// Called when the smart terrain system has finished initializing
-    /// </summary>
-    public void OnInitialized(SmartTerrainInitializationInfo initializationInfo)
-    {
-    }
-
-    /// <summary>
-    /// Called when the geometry of a surface has been updated
-    /// </summary>
-    public void OnSurfaceUpdated(SurfaceAbstractBehaviour surfaceBehaviour)
-    {
-    }
-
-    /// <summary>
-    /// Called when a smart terrain prop has been created
-    /// </summary>
-    public void OnPropCreated(Prop prop)
-    {
-        var manager = TrackerManager.Instance.GetStateManager().GetSmartTerrainManager();
-        manager.AssociateProp(PropTemplate, prop);
-    }
-
-    /// <summary>
-    /// Called when the geometry of a smart terrain prop has been updated
-    /// </summary>
-    public void OnPropUpdated(Prop prop)
-    {
-    }
-
-    /// <summary>
-    /// Called when a smart terrain prop has been destroyed
-    /// </summary>
-    public void OnPropDeleted(Prop prop)
-    {
-    }
-
-    #endregion // ISmartTerrainEventHandler_IMPLEMENTATION
 }
 
 
