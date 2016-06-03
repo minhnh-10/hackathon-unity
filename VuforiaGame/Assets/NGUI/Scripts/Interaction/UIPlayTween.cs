@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2014 Tasharen Entertainment
+// Copyright © 2011-2015 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -15,6 +15,8 @@ using System.Collections.Generic;
 [AddComponentMenu("NGUI/Interaction/Play Tween")]
 public class UIPlayTween : MonoBehaviour
 {
+	static public UIPlayTween current;
+
 	/// <summary>
 	/// Target on which there is one or more tween.
 	/// </summary>
@@ -138,6 +140,8 @@ public class UIPlayTween : MonoBehaviour
 		UIToggle toggle = GetComponent<UIToggle>();
 		if (toggle != null) EventDelegate.Remove(toggle.onChange, OnToggle);
 	}
+
+	void OnDragOver () { if (trigger == Trigger.OnHover) OnHover(true); }
 
 	void OnHover (bool isOver)
 	{
@@ -307,7 +311,11 @@ public class UIPlayTween : MonoBehaviour
 					}
 					else
 					{
-						if (resetOnPlay || (resetIfDisabled && !tw.enabled)) tw.ResetToBeginning();
+						if (resetOnPlay || (resetIfDisabled && !tw.enabled))
+						{
+							tw.Play(forward);
+							tw.ResetToBeginning();
+						}
 						// Listen for tween finished messages
 						EventDelegate.Add(tw.onFinished, OnFinished, true);
 						tw.Play(forward);
@@ -323,15 +331,17 @@ public class UIPlayTween : MonoBehaviour
 
 	void OnFinished ()
 	{
-		if (--mActive == 0)
+		if (--mActive == 0 && current == null)
 		{
+			current = this;
 			EventDelegate.Execute(onFinished);
-			
+
 			// Legacy functionality
 			if (eventReceiver != null && !string.IsNullOrEmpty(callWhenFinished))
 				eventReceiver.SendMessage(callWhenFinished, SendMessageOptions.DontRequireReceiver);
 
 			eventReceiver = null;
+			current = null;
 		}
 	}
 }

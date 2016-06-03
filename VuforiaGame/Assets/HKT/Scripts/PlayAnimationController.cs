@@ -12,7 +12,7 @@ public class PlayAnimationController : MonoBehaviour
 		void Awake ()
 		{
 				animState = new List<AnimationState> ();
-				anim = gameObject.animation;
+				anim = gameObject.GetComponent<Animation>();
 				foreach (AnimationState clip in anim) {
 						animState.Add (clip);
 				}

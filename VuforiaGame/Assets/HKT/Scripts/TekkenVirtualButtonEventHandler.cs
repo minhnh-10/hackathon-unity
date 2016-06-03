@@ -12,8 +12,8 @@ public class TekkenVirtualButtonEventHandler : MonoBehaviour, IVirtualButtonEven
 
 				//Debug.Log (obj.name);
 				animState = new List<AnimationState> ();
-				Debug.Log (gameObject.name);
-				Debug.Log (gameObject.transform.GetChild (1).name);
+//				Debug.Log (gameObject.name);
+//				Debug.Log (gameObject.transform.GetChild (1).name);
 				anim = imgTarget.transform.GetChild (1).GetComponent<Animation> ();
 				foreach (AnimationState clip in anim) {
 						animState.Add (clip);
@@ -31,12 +31,12 @@ public class TekkenVirtualButtonEventHandler : MonoBehaviour, IVirtualButtonEven
 		void Start ()
 		{
 				// Search for all Children from this ImageTarget with type VirtualButtonBehaviour
-				VirtualButtonBehaviour[] vbs = GetComponentsInChildren<VirtualButtonBehaviour> ();
-				for (int i = 0; i < vbs.Length; ++i) {
-						// Register with the virtual buttons TrackableBehaviour
-						vbs [i].RegisterEventHandler (this);
-						vbs [i].UpdateAreaRectangle ();
-				}
+//				VirtualButtonBehaviour[] vbs = GetComponentsInChildren<VirtualButtonBehaviour> ();
+//				for (int i = 0; i < vbs.Length; ++i) {
+//						// Register with the virtual buttons TrackableBehaviour
+//						vbs [i].RegisterEventHandler (this);
+//						vbs [i].UpdateAreaRectangle ();
+//				}
 		}
 	
 		/// <summary>

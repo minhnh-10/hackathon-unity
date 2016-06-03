@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2014 Tasharen Entertainment
+// Copyright © 2011-2015 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -27,18 +27,38 @@ public class UIToggleInspector : UIWidgetContainerEditor
 		GUI.changed = false;
 
 		GUILayout.BeginHorizontal();
-		NGUIEditorTools.DrawProperty("Group", serializedObject, "group", GUILayout.Width(120f));
+		SerializedProperty sp = NGUIEditorTools.DrawProperty("Group", serializedObject, "group", GUILayout.Width(120f));
 		GUILayout.Label(" - zero means 'none'");
 		GUILayout.EndHorizontal();
+
+		EditorGUI.BeginDisabledGroup(sp.intValue == 0);
+		NGUIEditorTools.DrawProperty("  State of 'None'", serializedObject, "optionCanBeNone");
+		EditorGUI.EndDisabledGroup();
 
 		NGUIEditorTools.DrawProperty("Starting State", serializedObject, "startsActive");
 		NGUIEditorTools.SetLabelWidth(80f);
 
-		if (NGUIEditorTools.DrawHeader("State Transition"))
+		if (NGUIEditorTools.DrawMinimalisticHeader("State Transition"))
 		{
-			NGUIEditorTools.BeginContents();
+			NGUIEditorTools.BeginContents(true);
 			NGUIEditorTools.DrawProperty("Sprite", serializedObject, "activeSprite");
-			NGUIEditorTools.DrawProperty("Animation", serializedObject, "activeAnimation");
+
+			SerializedProperty animator = serializedObject.FindProperty("animator");
+			SerializedProperty animation = serializedObject.FindProperty("activeAnimation");
+
+			if (animator.objectReferenceValue != null)
+			{
+				NGUIEditorTools.DrawProperty("Animator", animator, false);
+			}
+			else if (animation.objectReferenceValue != null)
+			{
+				NGUIEditorTools.DrawProperty("Animation", animation, false);
+			}
+			else
+			{
+				NGUIEditorTools.DrawProperty("Animator", animator, false);
+				NGUIEditorTools.DrawProperty("Animation", animation, false);
+			}
 
 			if (serializedObject.isEditingMultipleObjects)
 			{
@@ -50,7 +70,7 @@ public class UIToggleInspector : UIWidgetContainerEditor
 				Transition tr = toggle.instantTween ? Transition.Instant : Transition.Smooth;
 				GUILayout.BeginHorizontal();
 				tr = (Transition)EditorGUILayout.EnumPopup("Transition", tr);
-				GUILayout.Space(18f);
+				NGUIEditorTools.DrawPadding();
 				GUILayout.EndHorizontal();
 
 				if (GUI.changed)
