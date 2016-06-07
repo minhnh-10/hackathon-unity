@@ -1,5 +1,17 @@
 fileFormatVersion: 2
 guid: 4700c849fd14a4060b7d95703be365ca
 folderAsset: yes
-DefaultImporter:
+timeCreated: 1465271517
+licenseType: Pro
+PluginImporter:
+  serializedVersion: 1
+  iconMap: {}
+  executionOrder: {}
+  isPreloaded: 0
+  platformData:
+    Any:
+      enabled: 1
+      settings: {}
   userData: 
+  assetBundleName: 
+  assetBundleVariant: 
